@@ -85,7 +85,7 @@ labels = np.arange(len(all_labels))
 numOfEach = [len(list(group)) for key, group in groupby(y_train)]
 avgOfAll = np.mean(numOfEach)
 print("Average number of training images:", int(avgOfAll))
-ax.barh(labels, numOfEach, align='center', color='blue')
+ax.barh(labels, numOfEach, align='center', color='blue', orient='o')
 ax.set_yticks(labels)
 ax.set_yticklabels(all_labels)
 ax.invert_yaxis()  # labels read top-to-bottom
@@ -207,7 +207,7 @@ for i in range(0, n_classes):
     x_selected = X_train[y_train == i]
     imgEf = ImageEffect()
     img = x_selected[0]
-    img = imgEf.transformImage(img, 5)
+    img = imgEf.transformImage(img, 6)
     plt.imshow(img) #draw the first image of each class
     plt.title(all_labels[i])
     plt.axis('off')
