@@ -110,8 +110,13 @@ class ImageEffect:
             img = self.flip(img)
         if effects == 6:
             img = self.pad(img)
+        if effects == 7:
+            img = self.random_scale(img)
+        if effects == 8:
+            img = self.contrast(img)
+        if effects == 9:
+            img = self.linear(img)
         return img
-
 
     def translate(self, img):
         x = img.shape[0]
@@ -125,7 +130,6 @@ class ImageEffect:
 
         return shift_img
 
-
     def rotate(self, img):
         row, col, channel = img.shape
 
@@ -135,7 +139,6 @@ class ImageEffect:
 
         rotated_img = cv2.warpAffine(img, rotation_matrix, (col, row))
         return rotated_img
-    
     
     def shear(self, img):
         x, y, channel = img.shape
@@ -150,12 +153,10 @@ class ImageEffect:
         result = cv2.warpAffine(img, M, (y, x))
         return result
 
-
     def blur(self, img):
         r_int = np.random.randint(0, 2)
         odd_size = 2 * r_int + 1
         return cv2.GaussianBlur(img, (odd_size, odd_size), 0)
-
 
     def gamma(self, img):
         gamma = np.random.uniform(0.3, 1.5)
@@ -163,7 +164,6 @@ class ImageEffect:
         table = np.array([((i / 255.0) ** invGamma) * 255 for i in np.arange(0, 256)]).astype("uint8")
         new_img = cv2.LUT(img, table)
         return new_img
-    
     
     def flip(self, img):
         lr = bool(random.getrandbits(1))
@@ -173,7 +173,6 @@ class ImageEffect:
         if ud:
             img = cv2.flip(img, flipCode=0)
         return img
-    
     
     def pad(self, img, pad_width=None, axis=0, mode='symmetric'):
         hei,wid=img.shape[0],img.shape[1]      
@@ -198,7 +197,27 @@ class ImageEffect:
         
         return cv2.resize(newimage,(wid,hei),interpolation=cv2.INTER_NEAREST)
     
+    def random_scale(self, img):
+        img2=img.copy()
+        sc_y=0.4*np.random.rand()+1.0
+        img2=cv2.resize(img, None, fx=1, fy=sc_y, interpolation = cv2.INTER_CUBIC)
+        dy = int((img2.shape[1]-img.shape[0])/2)
+        end = img.shape[1]-dy
+        img2 = img2[dy:end,:,:]
+        assert img2.shape[0] == 32
+        #print(img2.shape,dy,end)
+        return img2
+    
+    def linear(self.img, s=1.0, m=0.0):
+        img2=cv2.multiply(img, np.array([s]))
+        return cv2.add(img2, np.array([m]))
+    
+    def contrast(self.img, s=1.0):
+        m=127.0*(1.0-s)
+        return linear(img, s, m)
 
+    
+    
 ### Show images with it label.
 num_of_samples=[]
 plt.figure(figsize=(15, 30))
